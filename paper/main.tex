@@ -30,52 +30,55 @@ speed and accuracy of detection in the future.
 
 \subsection{Motivation}
 
+Recent research has focused on how to improve the use of video tutorials 
+to help users learn software ~\cite{matejka_ambient_2011}~\cite{pongnumkul_pause-and-play_2011}.  
+One strength of video tutorials may be that users
+can directly observe expert use, which can serve as a strong learning aid~\cite{shneiderman_direct_1983}.  Grossman \& Fitzmaurice showed benefits of short 
+contextual video clips.  Short, 10-25 second 
+contextually available videos were effective to help users accomplish task and 
+retain what they learned than traditional text-based tutorials~\cite{grossman_toolclips_2010}.
+
+However, video tutorials have drawbacks:
+Navigation issues could lead to misunderstanding of content~\cite{harrison_comparison_1995}.
+Users may not be able to keep up with the pace of the content~\cite{palmiter_evaluation_1991}.
+Researchers working with longer, 2-3 minute 
+task-oriented tutorials found that users performed better with text tutorials 
+than videos because users could not work at the same pace as the video~\cite{grabler_generating_2009}.
+In general, research on instructional videos point shows a need to segmented videos to
+emphasize the steps of the task.
+
 \textbf{Andrew: Make this have less of a strong focus on the value of
 video tutorials, and instead talk about mining usability from online data
 sources, such as with CUTS}
 
-Video tutorials have become prevalent for learning software (Matejka et al. 2011, 
-Pongnumkul et al. 2010, 1).  Banovic et al. claim this may be because users 
-can directly observe expert use, which can serve as a strong learning aid 
-(Shneiderman 1983, (1, 4)).  Grossman \& Fitzmaurice showed benefits of short 
-contextual video clips (Grossman \& Fitzmaurice 2010, 1).  Short, 10-25 second 
-contextually available videos were effective to help users accomplish task and 
-retain what they learned than traditional text-based tutorials (Grossman \& 
-Fitzmaurice 2010, 4).
-
-Though they also have their drawbacks (Hategekimana et al. 2008, 4):  
-Navigation issues could lead to misunderstanding of content (Harrison 1995, 
-(1, 4)), and users may not be able to keep up with the pace of the content 
-(Palmiter \& Elkerton 1991, 1).  Researchers working with longer, 2-3 minute 
-task-oriented tutorials found that users performed better with text tutorials 
-than videos because users could not work at the same pace as the video 
-(Grabler et al. 2009, 4).  Almost all research on instructional videos point 
-to a need for segmented videos that emphasize each step of the task (4).
-
 
 \section{Related Work}
 
-\textbf{Andrew: This should all use citations, not parentheses.}
+\subsection{Visually Reverse Engineering UIs}
 
-\subsection{Reverse Engineering UIs}
+By examining pixels, many have succeeded at reverse engineering user interfaces
+and interactions with user interfaces with purely visual information, independent
+of any knowledge of underlying application implementation. Work 
+by Zettleymoyer et al.~\cite{zettlemoyer_ibots_1999}~\cite{zettlemoyer_visual_1999}
+examine widget identification in IBOTS and VisMap.  Also see~\cite{potter_triggers_1992}~\cite{amant_image_2005}~\cite{lieberman_visual_2001}. 
+Visual identification of widgets and UIs may also have also been used in Olsen 
+et al.'s ScreenCrayons work that links annotations to arbitrary screen 
+elements~\cite{olsen_jr_implementing_1999},
+and in Tan et al.'s work to interactively subdivide windows with a 
+copy-paste metaphor~\cite{tan_wincuts_2004}.
+\textbf{Andrew: Check on this.}
 
-Runtime modification of existing interfaces is one application of reverse 
-engineeing UIs.  For example, replacing the toolkit drawing object and 
-intercepting commands (Edwards et al. 1997, Olsen et al. 1999, 2).  Others 
-have used interface introspection using the accessibility API 
-(Stuerzlinger et al. 2006, 2).  Others have dynamically loaded code into 
-the program space, for example with Scotty (Eagan et al. 2011, 2).
-
-Sikuli (Yeh et al. 2009, 1) uses computer vision to identify GUI elements from 
-screen captures, using template matching and voting based on invariant local 
-features (Yeh et al. 2009, 2).  Sikuli also searches for UI elements in the 
-interface (Bergman et al. 2005, 1), and automates GUI tasks (Chang et al. 2010, 
-1).  For searching based on screenshots, 3 types of features are extracted: 
-text from the source document, visual words computed from visual words from 
-MSER-detected salient elliptical patches, and 3-grams over widget-embedded 
-text extracted through OCR (4).  For searching on the screen for saved 
+More recently, Sikuli~\cite{yeh_sikuli_2009} uses computer vision to 
+identify GUI elements from screen captures, using template matching for small
+UI elements and voting based on invariant local features for large elements.
+In application, Sikuli allows users to search for documentation related to
+screenshots taken of UI elements, and to script GUI tasks using visual
+cues of the UI.  For searching based on screenshots, 3 types of features are 
+extracted: text from the source document, visual words computed from visual 
+words from MSER-detected salient elliptical patches, and 3-grams over widget-embedded 
+text extracted through OCR.  For searching on the screen for saved 
 screenshot images, small patterns are found via template matching and large 
-patterns through invariant feature voting (4).
+patterns through invariant feature voting.
 
 Pause-and-Play extends the template matching approach of Sikuli to detect 
 tool-selection UI events in compressed, low-resolution video tutorials.  
@@ -83,37 +86,34 @@ The system takes a tool palette template and tool icons as input,
 producing metadata file of tool changes with timecodes.  With template 
 matching at multiple resolutions, detection is invariant to recording 
 resolution and some camera effects.  Their system cannot be run in in 
-real-time (3).
+real-time~\cite{pongnumkul_pause-and-play_2011}.
 
-A number of different technologies attempt to learn templates for UI 
-elements (Chang et al. 2011, Dixon \& Fogarty 2010, Hurst et al. 2010, 
-Matejka et al. 2011, 1), using information from mouse APIs (Hurst et al. 
-2010, 1) and accessibility APIs (Chang et al. 2011).  Prefab identifies GUI 
-elements with GUI specific visual features (Dixon \& Fogarty 2010, 1), which 
-enables overlay of advanced interactions on existing interfaces (Dixon et al. 
-2011, Dixon et al. 2012, 1).  Waken contributes to this space by discovering 
+A number of different technologies attempt to learn templates for arbitrary UI 
+elements~\cite{chang_associating_2011}~\cite{dixon_prefab_2010}~\cite{hurst_automatically_2010}~\cite{matejka_ambient_2011}.
+Learning may require access to mouse APIs~\cite{hurst_automatically_2010}
+and accessibility APIs~\cite{chang_associating_2011}.
+
+Prefab identifies GUI elements with GUI specific visual features~\cite{dixon_prefab_2010}, which 
+enables overlay of advanced interactions on existing interfaces~\cite{dixon_content_2011}~\cite{dixon_general-purpose_2012}.
+\textbf{Andrew: Check up on this initial description.  I'm also not sure
+if Prefab actually belongs in this conceptual group.}
+To delve into the technical implementations of the Prefab pixel-based 
+matching algorithm, we report from~\cite{dixon_general-purpose_2012}.
+Prefab identifies interface elements using a library of prototypes.  
+This uses two strategies: exact matches of prototype pixels against an image,
+and modelining the prototype background and differencing pixel in an image 
+to identify foreground interface elements.  
+Prefab generalizes from example images to models which contain parts like 
+exact pixel features, or regions or areas of variable size or repeating 
+patterns.  It organizes the entire interface into a hierarchy.
+
+Waken contributes to this space by discovering 
 cursor shapes, clicking actions, icons, tooltips and menus, all by examining 
 the difference between frames of UI video.  They do this by making assumptions 
 about how the image of icons change during hover and press actions.  Detection 
-of the cursor and icons in later frames is performed by template matching (1).
-
-Pixel-based methods for reverse engineering UIs are motivated by their 
-indepenedece from underlying application or toolkit requirements (2).  Work 
-by Zettleymoyer et al. (Zettlemoyer et al. 1998, Zettlmoyer et al. 1999, 2) 
-examine widget identification in IBOTS and VisMap and in programming by 
-example (St. Amant et al., Potter, St. Amant et al. 2005, 2).  Olsen et al.'s 
-ScreenCrayons links ink annotations to arbitrary screen elements (Olsen et al. 
-2004, 2), and Tan et al.'s work interactively subdivides windows with a 
-copy-paste metaphor (Tan et al. 2004, 2).
-
-To delve into the technical implementations of the Prefab pixel-based 
-matching algorithm, we report from (2).  Prefab identifies interface elements 
-with a library of prototypes.  This uses two strategies: exact matches of 
-prototype pixels against an image, and modelining the prototype background 
-and differencing pixel in an image to identify foreground interface elements.  
-Prefab generalizes from example images to models which contain parts like 
-exact pixel features, or regions or areas of variable size or repeating 
-patterns.  It organizes the entire interface into a hierarchy (2).
+of the cursor and icons in later frames is performed by template matching~\cite{banovic_waken_2012}.
+We rely on techniques similar to those in Waken to establish when menus
+have been activated and menu items selected.
 
 \subsection{Action Recognition}
 
