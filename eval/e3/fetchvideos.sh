@@ -36,5 +36,5 @@ do
     -o "videos/V%(id)s-%(title)s-%(format)s.%(ext)s" \
     --restrict-filenames \
     --no-overwrites \
-    $vid
+    "$YOUTUBE$vid"
 done
