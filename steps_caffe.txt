@@ -1,0 +1,168 @@
+Here are some of my notes, so I don't forget them. This is about taking YouTube videos, extracting
+frames from it, and providing the frames to Caffe as data. Ideally, we would take videos that belong
+to several major classes. In this example, I assume that I will be extracting a set of tutorial
+videos for the following tools: (0) Eclipse, (1) Excel, (2) Photoshop, and (3) SketchUp. The (i)
+before the name indicates the integer index I am assigning it so that Caffe will recognize that
+these images are part of the same class.
+
+We may or may not end up using the work I do here, but along the way I am learning how to take new
+data and feed it to Caffe, so worst-case scenario, we learn how to use Caffe better.
+
+Just to be clear, the prediction problem will be: given a frame from a video, which of the four
+categories of Eclipse, Excel, Photoshop, or SketchUp does it belong to? This is like the ImageNet
+classification problem because it assumes that one image represents one class. If we really wanted
+to classify a whole video, it would probably be best to take its frames, classify all the frames,
+and pick the majority vote given by Caffe. Oh, and to save on computational power, what I actually
+do here is to take one frame for each second.
+
+~Daniel Seita
+
+********************************
+*** PART I: GETTING THE DATA ***
+********************************
+
+I found some YouTube playlists that I then downloaded to *.mp4 format using youtube-dl on the
+command line. The following example command shows this for the Excel tutorial playlist I found:
+
+youtube-dl --yes-playlist --playlist-start 1 -o "Excel_MotionTraining-%(playlist_index)s.mp4" -f mp4
+https://www.youtube.com/playlist?list=PL766858637FEA80BE
+
+where the --playlist-start 1 indciates that we want to pick from the start of the playlist. I had to
+manually check some videos because a few of the starting ones were not representative of the data
+(but Andrew's way of conditioning on the number of minutes is probably more robust to getting rid of
+noisy videos). Also, the -o argument indicates the output file naming convention and the -f mp4
+means we save in mp4, though that might happen by default even if it's not there.
+
+Great, so now I have a bunch of mp4 files. How do I extract one frame for each second of video time?
+For that, we can use ffmpeg. After installing it, I created a Python script that did it but it's
+really short:
+
+'''
+import os
+import subprocess
+
+for filename in os.listdir('.'):
+    if filename[-4:] == ".mp4":
+        print "\n\n\nEXTRACTING IMAGES FROM " + filename + "\n\n\n"
+        image_file = filename[:-3]
+        command = "ffmpeg -i " + filename + " -r 1 Images/" + image_file + "%4d.jpg"
+        subprocess.call(command.split())
+'''
+
+I call this in the same directory that has a crapload of mp4 movie files. For each one, I form a
+command string that I then call with subprocess. The format is 
+
+ffmpeg -i video_name_here -r 1 Images/image_name_here
+
+where the -r 1 means the frame rate, i.e., one frame per second, and the %4d.jpg part in the code
+appends the suffixes 0001.jpg, 0002.jpg, etc.
+
+The result is that the Images directory contains a CRAPLOAD of jpg images, and the best part is that
+we already know which video it came from based on the file name, so we can classify them based on
+"Eclipse", "Microsoft Excel", "Photoshop", or "Google SketchUp". 
+
+First, let's divide this up into training and testing data. What I did was I created the following
+files:
+
+${CAFFE_HOME}/CS280_FinalProject/train_all.txt
+${CAFFE_HOME}/CS280_FinalProject/test_all.txt
+
+where the train_all.txt and test_all.txt contain the image names AND (this is important!) an integer
+index representing its class. For training, I included 48,000 image names, with an equal proportion
+of Eclipse, Excel, Photoshop, and SketchUp videos. These were randomly drawn from the set of images.
+For instance, I had about 36,000 Eclipse images, but I randomly took 12,000 of those for training. A
+similar case occurred for the other parts. For testing, I took 2,000 of each class, for a total of
+8,000 images.
+
+To get some intuition, the first twelve lines of the training file were:
+
+Eclipse_JoseVidal-21.0528.jpg 0
+Excel_MotionTraining-11.0078.jpg 1
+PhotoshopCS6_KingTutsPro-08.0378.jpg 2
+SketchUp_K12-07.0491.jpg 3
+Eclipse_JoseVidal-56.0239.jpg 0
+Excel_MotionTraining-33.0069.jpg 1
+PhotoshopCS6_KingTutsPro-40.0199.jpg 2
+SketchUp_K12-04.0174.jpg 3
+Eclipse_JoseVidal-37.0472.jpg 0
+Excel_MotionTraining-25.0114.jpg 1
+PhotoshopCS6_KingTutsPro-13.0316.jpg 2
+SketchUp_Tutorials-25.0077.jpg 3
+
+Clearly, the testing file was about the same. Of course, I used different images for each.
+
+Now that we have labeled data in text files, and all the images are in one directory, we can use
+this as input for Caffe...
+
+
+****************************
+*** PART II: USING CAFFE ***
+****************************
+
+To train a neural network on our custom data using caffe, we have to convert it to one of the
+following: leveldb, lmdb, or hdf5. The program in tools/convert_imageset.cpp does what we need. Here
+is its comment header:
+
+'''
+This program converts a set of images to a lmdb/leveldb by storing them as Datum proto buffers.
+
+Usage:
+  convert_imageset [FLAGS] ROOTFOLDER/ LISTFILE DB_NAME
+
+where ROOTFOLDER is the root folder that holds all the images, and LISTFILE should be a list of
+files as well as their labels, in the format as
+  subfolder1/file1.JPEG 7
+'''
+
+In other words, I substitute LISTFILE with my train_all.txt or test_all.txt files. Those files only
+list the NAMES of the images and not their subfolders, but that is what the ROOTFOLDER is for.
+
+To generate the training data, I used this command in my Caffe root directory (note the BINARY file
+here, not the cpp one):
+
+./build/tools/convert_imageset.bin --logtostderr=1 -resize_width=256 -resize_height=256
+/Users/danielseita/UC_Berkeley_Material/CS_280-Computer_Vision/FinalProject/Videos_and_Images/Images/
+CS280_UI_Images/train_all.txt all_train_256
+
+As you can see, I am resizing all images to 256x256, which reduces the final file size by about 80
+gigs for the training data. The reason for doing --logtostderr=1 is so that I can get this output:
+
+I0424 21:24:15.000885 2087453456 convert_imageset.cpp:82] A total of 48000 images.
+I0424 21:24:15.003317 2087453456 db.cpp:34] Opened lmdb all_train_256
+E0424 21:24:24.910815 2087453456 convert_imageset.cpp:143] Processed 1000 files.
+E0424 21:24:34.966835 2087453456 convert_imageset.cpp:143] Processed 2000 files.
+...etc...
+E0424 21:32:02.923445 2087453456 convert_imageset.cpp:143] Processed 47000 files.
+E0424 21:32:13.053997 2087453456 convert_imageset.cpp:143] Processed 48000 files.
+
+The exact same thing happens for testing, only I substitute train_all.txt and all_train_256
+accordingly. The output, in all_train_256, should contain two files. Here they are, along with the
+file sizes (use the "ls -lh directory_name" command):
+
+all_train_256:
+total 18821832
+-rw-r--r--  1 danielseita  staff   9.0G Apr 24 21:32 data.mdb
+-rw-r--r--  1 danielseita  staff   8.0K Apr 24 21:24 lock.mdb
+
+Yeah, 9 gigs of data in data.mdb.
+
+Great, so now we have our all_train_256 and all_test_256 directories that contain the data. Now how
+do we use Caffe? It's the same process as our homework. We need to create a train.sh script (easy),
+a solver file (also easy) and a train/test prototxt file (hard, unless we copy an existing
+architecture). For the most part, we can copy from the examples and replace all directory names
+appropriately. I tried using the same as the LeNet example for the mnist data, with scaling data to
+1/256. I had to decrease the batch size because otherwise I got memory errors.
+
+Unfortunately, running it gives 0 percent accuracy on the data, which is really confusing to me. I
+will have to investigate this further...
+
+TODO
+
+Here are some errors I've encountered:
+
+(a) If it complains about the batch size somehow, make sure it's still there and not commented out
+in the .prototxt file.
+
+(b) If I get a "Check failed: error == cudaSuccess (2 vs. 0)  out of memory" that means the batch
+size is too large for the GPU. But I had to reduce it all the way down to four so maybe I should use
+the instructional machines?
