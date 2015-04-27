@@ -150,13 +150,9 @@ Great, so now we have our all_train_256 and all_test_256 directories that contai
 do we use Caffe? It's the same process as our homework. We need to create a train.sh script (easy),
 a solver file (also easy) and a train/test prototxt file (hard, unless we copy an existing
 architecture). For the most part, we can copy from the examples and replace all directory names
-appropriately. I tried using the same as the LeNet example for the mnist data, with scaling data to
-1/256. I had to decrease the batch size because otherwise I got memory errors.
-
-Unfortunately, running it gives 0 percent accuracy on the data, which is really confusing to me. I
-will have to investigate this further...
-
-TODO
+appropriately. In all cases, I tried decresing the batch size to 1/256 of its original level, for
+both grayscale and colored data. For grayscale, in convert_imageset.bin, we need the -gray=true
+flag. Also, we may wish to shuffle the data (actually, we should...) with -shuffle=true.
 
 Here are some errors I've encountered:
 
@@ -166,3 +162,24 @@ in the .prototxt file.
 (b) If I get a "Check failed: error == cudaSuccess (2 vs. 0)  out of memory" that means the batch
 size is too large for the GPU. But I had to reduce it all the way down to four so maybe I should use
 the instructional machines?
+
+(c) If I see accuracies of 0, make sure the number of output units is correct!
+
+Unfortunately, even with these checks, I still only get accuracy of 1/n where n is the number of
+classes (tested with n=3 and n=4) and it seems to make all decisions to be the n^{th} class. Here
+are some cases that I tested:
+
+- With all the data, with lmdb (described earlier)
+- With half the data, with a quarter of the data
+- With shuffled train/test data
+- With leveldb data instead of lmdb
+- With only 3 instead of 4 classes
+- Using LeNet (with grayscale 256x256 images)
+- Using AlexNet (with colored 256x256 images, mean-subtracted as required)
+- Using a standard deep fully connected neural network, the one we did in homework and another one
+  with the number of units in each layer multiplied by ten to reflect the larger images relative to
+  the homework
+
+So ... I am a little confused and sad.
+
+
