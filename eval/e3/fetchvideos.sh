@@ -32,7 +32,7 @@ do
   echo "=== Downloading video $vid ==="
   youtube-dl \
     --rate-limit $RATE_LIMIT \
-    -f "best[height=$HEIGHT]" \
+    -f "best[height=$HEIGHT]+bestaudio" \
     -o "videos/V%(id)s-%(title)s-%(format)s.%(ext)s" \
     --restrict-filenames \
     --no-overwrites \
