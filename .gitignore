@@ -1,3 +1,5 @@
 .DS_Store
 ~*.xlsx
 .ipynb_checkpoints/
+videos/
+.download.log
