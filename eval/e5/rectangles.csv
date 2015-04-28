@@ -1,0 +1,34 @@
+Vindex,VID,Eindex,Type,mm,ss,Class,Frame,x,y,w,h
+1,vXcC533_IcQ,1,file,00,22,File,690,0,18,174,272
+1,vXcC533_IcQ,2,file,00,23,Search,709,126,18,123,133
+1,vXcC533_IcQ,3,file,00,24,File,742,0,18,174,273
+1,vXcC533_IcQ,4,context,01,40,folder context menu,3003,47,86,145,257
+1,vXcC533_IcQ,5,context,02,58,Label,5316,273,71,129,271
+1,vXcC533_IcQ,6,context,03,48,folder,6821,29,77,144,265
+1,vXcC533_IcQ,7,context,03,51,folder,6945,182,53,126,191
+1,vXcC533_IcQ,8,context,12,22,project,22243,37,26,146,316
+1,vXcC533_IcQ,9,context,14,41,project,26424,47,26,143,318
+2,-MBS2YvUY2M,1,context,00,09,Package Explorer,233,33,84,140,125
+2,-MBS2YvUY2M,2,context,00,42,project,1049,31,41,146,304
+2,-MBS2YvUY2M,3,context,00,52,Package Explorer,1304,13,40,145,305
+2,-MBS2YvUY2M,4,context,01,38,project,2445,35,42,145,303
+2,-MBS2YvUY2M,5,context,01,42,project,2569,43,41,146,304
+2,-MBS2YvUY2M,6,context,01,44,project,2603,40,41,145,304
+2,-MBS2YvUY2M,7,context,04,49,string name,7235,415,128,126,131
+2,-MBS2YvUY2M,8,context,04,54,string value,7362,385,141,126,131
+2,-MBS2YvUY2M,9,context,06,30,project,9769,36,41,147,304
+2,-MBS2YvUY2M,10,context,08,58,project,13460,34,42,146,303
+2,-MBS2YvUY2M,11,context,09,28,project,14215,31,41,146,304
+2,-MBS2YvUY2M,12,context,09,49,console,14722,307,215,122,104
+2,-MBS2YvUY2M,13,context,10,43,run,16086,197,30,95,52
+3,p9KRJoX13vo,1,file,00,06,File,85,19,14,102,178
+3,p9KRJoX13vo,2,file,N/A,N/A,File|New,115,118,15,94,220
+3,p9KRJoX13vo,3,file,10,03,Window,9041,105,13,74,123
+3,p9KRJoX13vo,4,file,N/A,N/A,,9067,173,39,101,140
+4,o1vRJ07KDZ0,1,context,08,49,Device,13221,243,60,116,179
+4,o1vRJ07KDZ0,2,context,09,01,Device,13521,243,60,116,178
+4,o1vRJ07KDZ0,3,context,09,15,Device,13880,243,58,117,180
+5,ok8mZW_BDG4,1,file,00,43,File,1288,55,11,146,225
+5,ok8mZW_BDG4,2,file,00,46,File|Switch Workspace,1359,197,168,172,41
+5,ok8mZW_BDG4,3,file,01,21,File,2419,54,11,147,225
+5,ok8mZW_BDG4,4,file,01,24,File|New,2506,198,11,122,257
