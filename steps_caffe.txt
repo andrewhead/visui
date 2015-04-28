@@ -182,4 +182,6 @@ are some cases that I tested:
 
 So ... I am a little confused and sad.
 
+TODO: Possibly delete the first 10 seconds of each video? Those may have noise for
+"introductory"-like stuff. I doubt it will help but we can try. Also, re-randomize the data.
 
