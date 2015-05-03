@@ -1,3 +1,4 @@
+# Use this for training and testing, but NOT deployment!
 name: "CaffeNet"
 layer {
   name: "data"
@@ -10,21 +11,13 @@ layer {
   transform_param {
     mirror: true
     crop_size: 227 # Daniel: problem is that this will get rid of important info for our data. Original was 227.
+    mean_file: "/Users/danielseita/caffe/CS280_FinalProject/videos_v2_train_all_mean.binaryproto"
     #mean_file: "data/ilsvrc12/imagenet_mean.binaryproto" # Daniel: need our mean file
-    mean_file: "/Users/danielseita/caffe/CS280_FinalProject/videos_v2_train_56000_mean.binaryproto"
   }
-# mean pixel / channel-wise mean instead of mean image
-#  transform_param {
-#    crop_size: 227
-#    mean_value: 104
-#    mean_value: 117
-#    mean_value: 123
-#    mirror: true
-#  }
   data_param {
     #source: "examples/imagenet/ilsvrc12_train_lmdb" # Daniel: need to change this as well
-    source: "/Users/danielseita/caffe/CS280_FinalProject/videos_v2_train_56000_shuffled_lmdb" 
-    batch_size: 36 # Daniel: original was 256
+    source: "/Users/danielseita/caffe/CS280_FinalProject/videos_v2_train_all_lmdb"
+    batch_size: 32 # Daniel: original was 256
     backend: LMDB
   }
 }
@@ -39,21 +32,13 @@ layer {
   transform_param {
     mirror: false
     crop_size: 227 # Daniel: problem is that this will get rid of important info for our data. Original was 227.
+    mean_file: "/Users/danielseita/caffe/CS280_FinalProject/videos_v2_train_all_mean.binaryproto"
     #mean_file: "data/ilsvrc12/imagenet_mean.binaryproto" # Daniel: need our mean file
-    mean_file: "/Users/danielseita/caffe/CS280_FinalProject/videos_v2_train_56000_mean.binaryproto"
   }
-# mean pixel / channel-wise mean instead of mean image
-#  transform_param {
-#    crop_size: 227
-#    mean_value: 104
-#    mean_value: 117
-#    mean_value: 123
-#    mirror: true
-#  }
   data_param {
-    #source: "examples/imagenet/ilsvrc12_val_lmdb" # Daniel: need to change this as well
-    source: "/Users/danielseita/caffe/CS280_FinalProject/videos_v2_test_12000_shuffled_lmdb"
-    batch_size: 50 # Daniel: original was 50
+    #source: "examples/imagenet/ilsvrc12_val_lmdb" # Daniel: need to change this as well, use VALIDATION
+    source: "/Users/danielseita/caffe/CS280_FinalProject/videos_v2_val_all_lmdb"
+    batch_size: 100 # Daniel: original was 50
     backend: LMDB
   }
 }

@@ -1,14 +1,29 @@
-net: "/Users/danielseita/caffe/CS280_FinalProject/alexnet_train_val.prototxt"
-test_iter: 10
-test_interval: 5
+
+# Be careful and make sure our stuff makes sense! TODO Put in some settings that should be fixed.
+
+#net: "/Users/danielseita/caffe/CS280_FinalProject/alexnet_train_val_nonoise.prototxt"
+net: "/Users/danielseita/caffe/CS280_FinalProject/alexnet_train_val_all.prototxt"
+
+# We have 8000 testing (or perhaps validation is more appropriate) images. In the prototxt we
+# specify a batch size of 100, so we need 80 test iterations to get to all of these.
+test_iter: 80
+test_interval: 50
+
+# Next, be sure base_lr os 0.001 (not 0.01) and momentum is 0.99 (not 0.9); lr is lower, but
+# momentum is up! Also, use 8000 max iterations since that's the max we need to touch all tests. 
 base_lr: 0.001
 lr_policy: "step"
 gamma: 0.1
 stepsize: 100000
-display: 1
-max_iter: 450000
+display: 10
+max_iter: 1000
 momentum: 0.99
 weight_decay: 0.0005
-snapshot: 10000
-snapshot_prefix: "/Users/danielseita/caffe/CS280_FinalProject/alexnet_snapshots"
+
+# Snapshots every TEN (edit: 20, these take a lot of memory) iterations, so I can make detailed plots!
+snapshot: 20
+
+#snapshot_prefix: "/Users/danielseita/caffe/CS280_FinalProject/snapshots/alex_nonoise"
+snapshot_prefix: "/Users/danielseita/caffe/CS280_FinalProject/snapshots/alex_all"
+
 solver_mode: GPU
