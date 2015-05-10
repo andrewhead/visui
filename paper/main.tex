@@ -127,15 +127,15 @@ Figures~\ref{fig:filters_all} and~\ref{fig:filters_nonoise} show visualizations 
 the first layer of AlexNet, each of which has dimension $55\times 55$. These were taken for the
 model that had 1000 iterations of training.
 
-\begin{figure}[b]
+\begin{figure}[t]
 \centering
-  \begin{minipage}{.45\textwidth}
+  \begin{minipage}{.4\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{Filters_All1000}
   \caption{Visualization of filters from the network trained on all our image data.}
   \label{fig:filters_all}
   \end{minipage}\hfill
-  \begin{minipage}{.45\textwidth}
+  \begin{minipage}{.4\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{Filters_NoNoise1000}
   \caption{Visualization of filters from the network trained on ``no noise'' image data.}
@@ -143,6 +143,28 @@ model that had 1000 iterations of training.
   \end{minipage}
 \end{figure}
 
+Finally, we performed a brief, informal experiment where we applied the neural network to videos that
+were not part of our training or testing data. We chose one video for each of the four classes by
+searching on Google Video ``X tutorial'' where ``X'' was replaced by one of the four video names.
+The first video that was between 5 and 20 minutes long, and that was not already part of our
+training/testing data, was selected. We extracted one frame per second for the four videos, and
+deleted the first ten and final ten frames from consideration.
+
+To classify the frames, we applied our AlexNet neural network trained on the ``noiseless'' data
+after 1000 iterations. To describe the output, we use ``splits'' where $(a,b,c,d)$ indicates that
+$a, b, c,$ and $d$ frames were classified as Eclipse, Excel, Photoshop, and SketchUp, respectively.
+The splits were as follows: the Eclipse video had $(319,0,79,0)$, the Excel video had
+$(610,0,71,7)$, the Photoshop had $(1,6,416,69)$, and the SketchUp had $(9,2,233,804)$. Clearly, for
+the Eclipse, Photoshop, and SketchUp videos, the classifer was able to assign the vast majority of
+frames to the correct class. If we were using this as part of an overall data mining pipeline, our
+classifier would assign the video according to the most-assigned class, so three videos would be
+classified correctly.
+
+The Excel output is interesting, because our network thought most of the frames belonged to Eclipse
+videos. A brief look at the video indicated that it had an introductory scene that took up ninety
+seconds (and we only deleted the first 10 frames) and that it was about a newer version of Excel
+(2013) than the ones that were trained in our network (2007). Still, it is unfortunate but shows
+that we need to be able to provide a wider variety of training data.
 
 \section{Locating Menus in a Frame Sequence}
 
