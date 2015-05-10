@@ -1,12 +1,15 @@
-\documentclass[12pt]{memoir}
+\documentclass[10pt]{article}
 \usepackage[backend=bibtex,style=numeric]{biblatex}
-\usepackage{simplestyle}
+%\usepackage{simplestyle}
 \usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fullpage}
 
 \addbibresource{refs}
 
-\title{Extracting Menu Navigation and Program Configuration Events 
-from User Interface Video Tutorials}
+\title{Extracting Application and Menu Events from UI Tutorial Videos}
 \author{Daniel Seita \& Andrew Head}
 
 \begin{document}
@@ -15,49 +18,40 @@ from User Interface Video Tutorials}
 
 \section{Introduction}
 
-\textbf{This work seeks to use video processing and object recognition techniqes as
-a technique to mine the usability of an application.}  Given the proliferation
-of video tutorials on using different software, this provides new opportunties
-to assess what complex actions are frequently performed by a variety of users.
-We describe a technique for recognizing menus, detecting that an item has
-been clicked in a menu, comparing this menu item to all other instances of
-that same item by template matching, and then composing temporally close
-menu navigations into configuration tasks.  By working with a corpus of
-around 100 tutorials related to setting up the Eclipse environment for
-programming tasks, we describe the configuration tasks that are performed
-the most often.  We discuss how we can improve this workflow to improve the
-speed and accuracy of detection in the future.
+This work seeks to use video processing and object recognition techniques as a technique to
+mine the usability of an application.  Given the proliferation of video tutorials on using
+different software, this provides new opportunities to assess what complex actions are frequently
+performed by a variety of users.  We describe a technique for recognizing menus, detecting that an
+item has been clicked in a menu, comparing this menu item to all other instances of that same item
+by template matching, and then composing temporally close menu navigations into configuration tasks.
+By working with a corpus of around 100 tutorials related to setting up the Eclipse environment for
+programming tasks, we describe the configuration tasks that are performed the most often.  We
+discuss how we can improve this workflow to improve the speed and accuracy of detection in the
+future.
 
-Our contributions include a small but effective dataset for evaluating
-the effectiveness of detectors of UI menu-opening actions.
+Our contributions include a small but effective dataset for evaluating the effectiveness of
+detectors of UI menu-opening actions.
 
-\subsection{Motivation}
+Recent research has focused on how to improve the use of video tutorials to help users learn
+software ~\cite{matejka_ambient_2011}~\cite{pongnumkul_pause-and-play_2011}.  One strength of video
+tutorials may be that users can directly observe expert use, which can serve as a strong learning
+aid~\cite{shneiderman_direct_1983}.  Grossman \& Fitzmaurice showed benefits of short contextual
+video clips.  Short, 10-25 second contextually available videos were effective to help users
+accomplish task and retain what they learned than traditional text-based
+tutorials~\cite{grossman_toolclips_2010}.
 
-Recent research has focused on how to improve the use of video tutorials 
-to help users learn software ~\cite{matejka_ambient_2011}~\cite{pongnumkul_pause-and-play_2011}.  
-One strength of video tutorials may be that users
-can directly observe expert use, which can serve as a strong learning aid~\cite{shneiderman_direct_1983}.  Grossman \& Fitzmaurice showed benefits of short 
-contextual video clips.  Short, 10-25 second 
-contextually available videos were effective to help users accomplish task and 
-retain what they learned than traditional text-based tutorials~\cite{grossman_toolclips_2010}.
+However, video tutorials have drawbacks: Navigation issues could lead to misunderstanding of
+content~\cite{harrison_comparison_1995}.  Users may not be able to keep up with the pace of the
+content~\cite{palmiter_evaluation_1991}.  Researchers working with longer, 2-3 minute task-oriented
+tutorials found that users performed better with text tutorials than videos because users could not
+work at the same pace as the video~\cite{grabler_generating_2009}.  In general, research on
+instructional videos point shows a need to segmented videos to emphasize the steps of the task.
 
-However, video tutorials have drawbacks:
-Navigation issues could lead to misunderstanding of content~\cite{harrison_comparison_1995}.
-Users may not be able to keep up with the pace of the content~\cite{palmiter_evaluation_1991}.
-Researchers working with longer, 2-3 minute 
-task-oriented tutorials found that users performed better with text tutorials 
-than videos because users could not work at the same pace as the video~\cite{grabler_generating_2009}.
-In general, research on instructional videos point shows a need to segmented videos to
-emphasize the steps of the task.
-
-\textbf{Andrew: Make this have less of a strong focus on the value of
-video tutorials, and instead talk about mining usability from online data
-sources, such as with CUTS}
+\textbf{Andrew: Make this have less of a strong focus on the value of video tutorials, and instead
+talk about mining usability from online data sources, such as with CUTS}
 
 
 \section{Related Work}
-
-\subsection{Visually Reverse Engineering UIs}
 
 By examining pixels, many have succeeded at reverse engineering user interfaces
 and interactions with user interfaces with purely visual information, independent
@@ -118,11 +112,57 @@ of the cursor and icons in later frames is performed by template matching~\cite{
 We rely on techniques similar to those in Waken to establish when menus
 have been activated and menu items selected.
 
-\subsection{Action Recognition}
 
-Work here by Jitendra and Georgia and beyond.
+\section{Video Classification}
 
-\section{Data}
+This will be Daniel's section. I'm probably not going to include any subsections to save time.
+
+Figure~\ref{fig:alex_net} shows our accuracy results for the two AlexNet networks we trained.
+
+Figure~\ref{fig:per_class} shows our per-class accuracy results for the ``no noise'' AlexNet
+network.
+
+\begin{figure}
+\centering
+  \begin{minipage}{.45\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{AlexNet_Accuracy}
+  \caption{AlexNet accuracy results of two networks trained on two image datasets.}
+  \label{fig:alex_net}
+  \end{minipage}\hfill
+  \begin{minipage}{.45\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{PerClassPerformance}
+  \caption{AlexNet per-class accuracy results for the network trained on ``no noise'' data.}
+  \label{fig:per_class}
+  \end{minipage}
+\end{figure}
+
+Figures~\ref{fig:filters_all} and~\ref{fig:filters_nonoise} show visualizations of the 96 filters in
+the first layer of AlexNet, each of which has dimension $55\times 55$.
+
+\begin{figure}
+\centering
+  \begin{minipage}{.4\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{Filters_All}
+  \caption{Visualization of filters from the network trained on all our image data.}
+  \label{fig:filters_all}
+  \end{minipage}\hfill
+  \begin{minipage}{.4\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{Filters_NoNoise}
+  \caption{Visualization of filters from the network trained on ``no noise'' image data.}
+  \label{fig:filters_nonoise}
+  \end{minipage}
+\end{figure}
+
+
+\section{Locating Menus in a Frame Sequence}
+
+This will be Andrew's section.
+
+\subsection{Data}
 
 Answer these questions:
 \begin{enumerate}[noitemsep]
@@ -133,13 +173,12 @@ Answer these questions:
 \end{enumerate}
 
 
-\section{Implementation}
-Here's a figure of our pipeline.  \textbf{Andrew: Add figure of pipeline.}
+\subsection{Implementation}
+Here's a figure of our (edit: Andrew's) pipeline.  \textbf{Andrew: Add figure of pipeline.}
 
+\subsection{Menu Location Results}
 
-\section{Results}
-
-Here we want to touch upon:
+Here we (edit: Andrew) want to touch upon:
 \begin{enumerate}[noitemsep]
 \item How reliably can we classify UI events?
 \item How long does it take for us to process one minute of video?  What are
@@ -149,19 +188,12 @@ screenshots of user interfaces.
 \end{enumerate}
 
 
-\section{Discussion}
+\section{Discussion and Conclusion}
 
-\subsection{Limitations}
+TODO (combining the two because we don't have a lot of space!)
 
-\subsection{Future Directions}
-
-
-\section{Conclusion}
- 
 We freakin' rock.
 
-
-\section{References}
-\printbibliography[heading=none]
+\printbibliography
 
 \end{document}
