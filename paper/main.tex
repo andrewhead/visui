@@ -161,27 +161,141 @@ correctly.
 
 \section{Locating Menus in a Frame Sequence}\label{andrew}
 
-This will be Andrew's section.
+Recent work~\cite{banovic_waken_2012} has shown how to extract templates for cursors and icons by
+monitoring pixel differences across frames.  While there has been some initial efforts
+towards recognizing tooltips and menus~\cite{banovic_waken_2012}, this task still lacks a
+satisfying solution, given that reliable techniques to identify menu-based events could enable
+automatic assessment of usability from UI video.
 
-Answer these questions:
-\begin{enumerate}[noitemsep]
-\item What is our dataset?
-\item How did we construct/acquire it?
-\item What's its size?
-\item (optional) How will we improve it in the future?
-\end{enumerate}
+Detecting menus based on pixel difference between frames poses three challenges.  First, compressed 
+video contains frame-to-frame noise that clouds the signal of a change in UI appearance, 
+particularly if UI widgets tend to fade in or out gradually.  Second, these menus occlude
+heterogeneous backgrounds (photos in Photoshop, colorful code in the IDE), making the difference
+at each individual pixel highly-varied relative to its neighbors when a new object appears in the
+foreground, even if it is of homogeneous color.  Third, depending on the operating system, 
+the edges dividing menus from ribbons and borders in the main UI may be subtle compared to the
+internal edges in a menu caused by text or internal horizontal lines that separate groups of options.
+This makes it impossible to apply traditinoal segmentation techniques to extract menu regions from 
+static images.
 
-Here's a figure of our (edit: Andrew's) pipeline.  \textbf{Andrew: Add figure of pipeline.}
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/pipeline1}
+        \caption{}
+        \label{fig:pipeline1}
+        \vspace*{2mm}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/pipeline2}
+        \caption{}
+        \label{fig:pipeline2}
+        \vspace*{2mm}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/pipeline3}
+        \caption{}
+        \label{fig:pipeline3}
+        \vspace*{2mm}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/pipeline4}
+        \caption{}
+        \label{fig:pipeline4}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/pipeline5}
+        \caption{}
+        \label{fig:pipeline5}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/pipeline6}
+        \caption{}
+        \label{fig:pipeline6}
+    \end{subfigure}
+    \caption{Our pipeline for extracting UI menu locations from a sequence of video frames.}
+\end{figure}
 
-Here we (edit: Andrew) want to touch upon:
-\begin{enumerate}[noitemsep]
-\item How reliably can we classify UI events?
-\item How long does it take for us to process one minute of video?  What are
-the practical implications of this?
-\item Some images that show recognition results for a few representative
-screenshots of user interfaces.
-\end{enumerate}
+We propose a method for extracting regions containing menus based on frame-to-frame pixel
+differences.  We address the first two of the three detection challenges described above.
 
+Our pipeline comprises three major steps.  First, we perform \emph{temporal smoothing}
+of frame-to-frame pixel differences by averaging pixel differences over a window of size 10 
+(Figure~\ref{fig:pipeline2}).  This reduces noise due to compression and enables us to detect
+menus that fade in instead of appearing instantly.  10 frames is one-third of a second in a $29.97fps$ video, 
+long enough to capture the entire fade-in of a menu in Windows 7 (3-5 frames)
+and short enough to avoid capturing multiple menu actions in the same window.  Second, we \emph{coalesce
+pixel differences} into a blob that spans the menu.  We perform heavy smoothing to remove
+discontinuities in edge segments and bridge blobs from menu text (Figure~\ref{fig:pipeline3}).
+We binarize the smoothed image at a heuristically-determined threshold (Figure~\ref{fig:pipeline4}).
+Finally, we use existing methods for contour detection to trace the blob outline (Figure~\ref{fig:pipeline5}),
+from which we take a rectangular bounding box as a region proposal (Figure~\ref{fig:pipeline6}).
+We ignore all blobs that are smaller than 5000 pixels (around $70x70$ pixels square) to filter
+out false positives from noisy regions of the screen.
+
+To test our technique, we found 33 menu appearance events in 5 tutorial videos about Android development
+in the Eclipse IDE.  This sample covered 3 different operating systems.
+For each menu appearance, we selected the first frame where the menu was fully opaque in the video
+(i.e., after fade-in) and manually determined its ground truth bounding box.
+
+The quality of our region proposals is promising.  Our technique locates region proposal that
+overlapping with the ground truth in 30/33 (91\%) of the test events.  We see an average 
+intersection-over-union of 74\%.  Our technique produced only 2 false positive bounding rectangles 
+for all menu appearances.  We note that the strength of our technique varies depending
+on operating system.  For example, our system produced low-overlap region proposals
+on a computer like Windows 2000, where the menu and application background color were likely
+indistinguishable to our difference detection methods (Figure~\ref{fig:proposal5}, Figure~\ref{fig:proposal6}).
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.15\textwidth}
+        \includegraphics[width=\textwidth]{fig/proposal1}
+        \caption{}
+        \label{fig:proposal1}
+        \vspace*{2mm}
+    \end{subfigure}
+    \begin{subfigure}{0.15\textwidth}
+        \includegraphics[width=\textwidth]{fig/proposal2}
+        \caption{}
+        \label{fig:proposal2}
+        \vspace*{2mm}
+    \end{subfigure}
+    \begin{subfigure}{0.15\textwidth}
+        \includegraphics[width=\textwidth]{fig/proposal3}
+        \caption{}
+        \label{fig:proposal3}
+        \vspace*{2mm}
+    \end{subfigure}
+    \begin{subfigure}{0.15\textwidth}
+        \includegraphics[width=\textwidth]{fig/proposal4}
+        \caption{}
+        \label{fig:proposal4}
+        \vspace*{2mm}
+    \end{subfigure}
+    \begin{subfigure}{0.15\textwidth}
+        \includegraphics[width=\textwidth]{fig/proposal5}
+        \caption{}
+        \label{fig:proposal5}
+        \vspace*{2mm}
+    \end{subfigure}
+    \begin{subfigure}{0.15\textwidth}
+        \includegraphics[width=\textwidth]{fig/proposal6}
+        \caption{}
+        \label{fig:proposal6}
+        \vspace*{2mm}
+    \end{subfigure}
+\end{figure}
+
+Our technique shows promise for extracting menu regions from UI videos.  We took preliminary efforts
+to determine how to detect frame indexes where menus appear.  We hypothesize that frames with a 
+high absolute pixel difference over their predecessors contained UI events.  To test his hypothesis, 
+we extracted frames from one tutorial video for which the absolute pixel difference in the last 10
+frames was in the 90th percentile of all differences.  Taking a sample of 50 of these frames, we confirmed that
+\emph{nearly all} frames in this percentile showed a UI event in progress.  Of these, only 6 (12\%) 
+were menu appearances or disappearances.  We conclude that while pixel difference-based inspection of frames may lead to
+high precision detection of UI events in general, more specialized techniques are needed to
+delineate menu-based UI events from application switches, window repainting, and window
+appearances and disappearances in the future.
 
 \section{Discussion and Conclusion}
 
