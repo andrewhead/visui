@@ -19,76 +19,53 @@
 
 In this project, we present two main contributions. First, we show that a standard neural network
 following the AlexNet architecture with minimal tweaking can accurately recognize frames belonging
-to a class of videos.  Second, we present a pipeline and procedure for detecting menus within a
-video frame sequence. We then discuss how these two stages might be combined to enhance the process
-of extracting useful information from videos.
+to a class of videos.  Second, we present a pipeline for detecting menus within a video frame
+sequence. We then discuss how these two stages might be combined to enhance the process of
+extracting information from videos.
 
 \subsection{Motivation}
 
 The proliferation of video tutorials on using different software raises new research questions on
-how to improve their use to help users learn software~\cite{matejka_ambient_2011,
-pongnumkul_pause-and-play_2011}.  One strength of video tutorials may be that users can directly
-observe expert use, which can serve as a strong learning aid. Grossman \& Fitzmaurice showed
-benefits of brief contextual video clips: short, 10-25 second contextually available videos were
-effective to help users accomplish task and retain what they learned than traditional text-based
-tutorials~\cite{grossman_toolclips_2010}. Unfortunately, video tutorials have drawbacks. Navigation
-issues could lead to misunderstanding of content, and users may not be able to keep up with the pace
-of instruction. Researchers working with longer, 2-3 minute task-oriented tutorials found that users
-performed better with text tutorials than videos because users could not work at the same pace as
-the video~\cite{grabler_generating_2009}.
+how to improve users' ability to learn from them~\cite{matejka_ambient_2011,
+pongnumkul_pause-and-play_2011}.  One strength of video tutorials is that users can directly observe
+expert use, which can serve as a strong learning aid. Grossman \& Fitzmaurice showed that short,
+10-25 second contextually-related videos were more effective to help users accomplish tasks than
+traditional text-based tutorials~\cite{grossman_toolclips_2010}.  Unfortunately, video tutorials
+have drawbacks. Navigation issues could lead to misunderstanding of content, and users may not be
+able to keep up with the pace of instruction. Researchers working with longer, 2-3 minute
+task-oriented tutorials found that users performed better with text tutorials than videos because
+users could not work at the same pace as the video~\cite{grabler_generating_2009}.
 
-In general, research on instructional videos point shows a need to segmented videos to emphasize the
-steps of the task. One way to do that might be to develop techniques for detecting locations of
-certain menu actions in the video, such as when the video shows its user clicking on a button in a
-Photoshop video to create a blank image. Our goal, therefore, is to utilize computer vision
-techniques to aid in this process.
+In general, research on instructional videos point shows a need to segment videos to emphasize
+certain steps. One way to automatically segment existing videos is to develop techniques for
+detecting locations of certain menu actions in videos. Our goal, therefore, is to do this by
+utilizing computer vision techniques.
 
 
 \subsection{Related Work}
 
 By examining pixels, many have succeeded at reverse engineering user interfaces and interactions
-with user interfaces with purely visual information, independent of any knowledge of underlying
-application implementation. Work by Zettleymoyer et
-al.~\cite{zettlemoyer_ibots_1999}~\cite{zettlemoyer_visual_1999} examine widget identification in
-IBOTS and VisMap.  Also
-see~\cite{potter_triggers_1992}~\cite{amant_image_2005}~\cite{lieberman_visual_2001}.  Visual
-identification of widgets and UIs may also have also been used in Olsen et al.'s ScreenCrayons work
-that links annotations to arbitrary screen elements~\cite{olsen_jr_implementing_1999}, and in Tan et
-al.'s work to interactively subdivide windows with a copy-paste metaphor~\cite{tan_wincuts_2004}.
-\textbf{Andrew: Check on this.}
-
-More recently, Sikuli~\cite{yeh_sikuli_2009} uses computer vision to identify GUI elements from
-screen captures, using template matching for small UI elements and voting based on invariant local
-features for large elements.  In application, Sikuli allows users to search for documentation
-related to screenshots taken of UI elements, and to script GUI tasks using visual cues of the UI.
-For searching based on screenshots, 3 types of features are extracted: text from the source
-document, visual words computed from visual words from MSER-detected salient elliptical patches, and
-3-grams over widget-embedded text extracted through OCR.  For searching on the screen for saved
-screenshot images, small patterns are found via template matching and large patterns through
-invariant feature voting.
+with purely visual information, independent of any knowledge of underlying application
+implementations. For instance, Sikuli~\cite{yeh_sikuli_2009} uses computer vision to identify GUI
+elements from screen captures, using template matching for small UI elements and voting based on
+invariant local features for large elements. Sikuli allows users to search for documentation related
+to screenshots of UI elements, and to script GUI tasks using visual cues.
 
 Pause-and-Play extends the template matching approach of Sikuli to detect tool-selection UI events
 in compressed, low-resolution video tutorials.  The system takes a tool palette template and tool
 icons as input, producing metadata file of tool changes with timecodes.  With template matching at
-multiple resolutions, detection is invariant to recording resolution and some camera effects.  Their
-system cannot be run in in real-time~\cite{pongnumkul_pause-and-play_2011}.
+multiple resolutions, detection is invariant to recording resolution and some camera
+effects~\cite{pongnumkul_pause-and-play_2011}.
 
-A number of different technologies attempt to learn templates for arbitrary UI
-elements~\cite{chang_associating_2011}~\cite{dixon_prefab_2010}~\cite{hurst_automatically_2010}~\cite{matejka_ambient_2011}.
-Learning may require access to mouse APIs~\cite{hurst_automatically_2010} and accessibility
-APIs~\cite{chang_associating_2011}.
 
+% Can cite these but we need more space for actual content: ~\cite{dixon_content_2011}~\cite{dixon_general-purpose_2012}.
 Prefab identifies GUI elements with GUI specific visual features~\cite{dixon_prefab_2010}, which
-enables overlay of advanced interactions on existing
-interfaces~\cite{dixon_content_2011}~\cite{dixon_general-purpose_2012}.  \textbf{Andrew: Check up on
-this initial description.  I'm also not sure if Prefab actually belongs in this conceptual group.}
-To delve into the technical implementations of the Prefab pixel-based matching algorithm, we report
-from~\cite{dixon_general-purpose_2012}.  Prefab identifies interface elements using a library of
-prototypes.  This uses two strategies: exact matches of prototype pixels against an image, and
-modelining the prototype background and differencing pixel in an image to identify foreground
-interface elements.  Prefab generalizes from example images to models which contain parts like exact
-pixel features, or regions or areas of variable size or repeating patterns.  It organizes the entire
-interface into a hierarchy.
+enables overlay of advanced interactions on existing interfaces.  Prefab identifies interface
+elements using a library of prototypes.  This uses two strategies: exact matches of prototype pixels
+against an image, and modelining the prototype background and differencing pixel in an image to
+identify foreground interface elements.  Prefab generalizes from example images to models which
+contain parts like exact pixel features, or regions or areas of variable size or repeating patterns.
+It organizes the entire interface into a hierarchy.
 
 Waken contributes to this space by discovering cursor shapes, clicking actions, icons, tooltips and
 menus, all by examining the difference between frames of UI video.  They do this by making
@@ -98,14 +75,19 @@ rely on techniques similar to those in Waken to establish when menus have been a
 items selected.
 
 
-\section{Video Classification}
+\section{Video Classification}\label{sec:daniel}
 
-This will be Daniel's section. I'm probably not going to include any subsections to save time.
-
-Figure~\ref{fig:alex_net} shows our accuracy results for the two AlexNet networks we trained.
-
-Figure~\ref{fig:per_class} shows our per-class accuracy results for the ``no noise'' AlexNet
-network.
+As a first step in the information extraction pipeline, we consider the following classification
+question: given a video tutorial, what application is it about? As an extra challenge, we will only
+assume we have access to the raw frames, and not other meta data such as the video title, etc.
+(Knowing that a video is called ``Eclipse Tutorial \#5'' would make the task too easy.) The
+rationale for analyzing this classification problem is that if we know the application that forms
+the basis of the video tutorial, then we can further specialize information extraction procedures.
+For instance, we might develop templates for matching Eclipse menu items, which would be deployed
+only if we are reasonably confident that a video tutorial is actually about Eclipse. Furthermore, if
+a video contains multiple applications (e.g., a video might contain Excel, Powerpoint, and other
+Microsoft Office products), we might be able to segment the video based on application type, which
+relates to the need to partition videos.
 
 \begin{figure}[t]
 \centering
@@ -123,9 +105,48 @@ network.
   \end{minipage}
 \end{figure}
 
-Figures~\ref{fig:filters_all} and~\ref{fig:filters_nonoise} show visualizations of the 96 filters in
-the first layer of AlexNet, each of which has dimension $55\times 55$. These were taken for the
-model that had 1000 iterations of training.
+To collect training data, we used the open source \texttt{youtube-dl} software to download videos
+from YouTube into mp4 format. We restricted our focus to videos about Eclipse, Excel, Photoshop, and
+SketchUp, and we extracted from playlists to maintain consistency among the four classes. Most
+videos were four to fifteen minutes long.  Then, we used the open source \texttt{ffmpeg} software to
+extract one frame per second from each video, which resulted in a set of about 110240 JPG images,
+roughly evenly split among the four classes. We randomly divided this into training, validation, and
+testing sets, with 52000 training images (13000 per class), 8000 validation images (2000 per class),
+and 1000 testing images (250 per class). All images were resized to $256\times 256$ pixels.
+
+We observed that many of the videos we found had specialized beginning and ending scenes that
+created frames that were different from what we would expect for those videos. For instance, the
+SketchUp videos we found had a lengthy 10-15 second introductory scene that was the same for all
+videos, but was not very similar to the various scenes inside the actual tutorial portion of the
+videos. Thus, we created two datasets: one with all the frames we extracted, and one with the
+\emph{first and last ten frames removed} for each video. Since we had one frame per second, this was
+equivalent to ``cropping'' each video by ten seconds on both sides. This cropped dataset, which also
+included cropped validation and testing frames, was termed the ``no noise'' data.
+
+To train our network, we used CAFFE's pre-provided AlexNet architecture, but increased the momentum
+from 0.9 to 0.99 and decreased the base learning rate from 0.01 to 0.001. We had fairly small batch
+size of 32 images, so our updates are relatively noisy. We ran training for 1000 iterations on both
+datasets and saved every 20th architecture for testing purposes.
+
+Figure~\ref{fig:alex_net} shows our accuracy results for the two AlexNet networks we trained on the
+test set of 1000 images. One can see that the architecture trained on all the data performed
+inconsistently on its testing data, and its accuracy eventually leveled off at 25 percent since it
+always guessed that frames belonged to SketchUp videos. In contrast, the architecture trained and
+tested on ``noiseless'' data performed about as good as we could have hoped for, with accuracy
+peaking at 96.1 percent after 1000 iterations.
+
+We also decided to investigate per-class accuracy results to see if certain types of video frames
+were harder to learn than others. Figure~\ref{fig:per_class} shows our per-class accuracy results
+for the ``no noise'' AlexNet network. For the first few iterations, accuracy varies wildly among the
+classes since it is not uncommon for the network to always pick one class. After that, it seems
+clear that the SketchUp videos are the hardest to learn since the black curve regularly shows worse
+accuracy results than the others. Fortunately, by the time we reach about 500 iterations, our
+network can correctly classify the vast majority of images across all four classes.
+
+We then investigated the 96 filters for the first layer of the AlexNet architecture, each of which
+has dimension $55\times 55$. Figures~\ref{fig:filters_all} and~\ref{fig:filters_nonoise} show
+visualizations for the two architectures taken after 1000 iterations of training. There are some
+interesting patterns present, such as straight lines and rough, curved shapes.
 
 \begin{figure}[t]
 \centering
@@ -166,11 +187,9 @@ seconds (and we only deleted the first 10 frames) and that it was about a newer 
 (2013) than the ones that were trained in our network (2007). Still, it is unfortunate but shows
 that we need to be able to provide a wider variety of training data.
 
-\section{Locating Menus in a Frame Sequence}
+\section{Locating Menus in a Frame Sequence}\label{andrew}
 
 This will be Andrew's section.
-
-\subsection{Data}
 
 Answer these questions:
 \begin{enumerate}[noitemsep]
@@ -180,11 +199,7 @@ Answer these questions:
 \item (optional) How will we improve it in the future?
 \end{enumerate}
 
-
-\subsection{Implementation}
 Here's a figure of our (edit: Andrew's) pipeline.  \textbf{Andrew: Add figure of pipeline.}
-
-\subsection{Menu Location Results}
 
 Here we (edit: Andrew) want to touch upon:
 \begin{enumerate}[noitemsep]
