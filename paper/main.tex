@@ -51,7 +51,7 @@ pixel differences to identify foreground interface elements.
 
 Perhaps most related, Waken~\cite{banovic_waken_2012}
 contributes to this research direction by discovering cursor shapes, clicking actions, icons, tooltips and
-menus, all by examining the difference between frames of UI video.  They do this by making
+menus, all by examining the difference between frames of UI videos.  They do this by making
 assumptions about how the image of icons change during hover and press actions.  Detection of the
 cursor and icons in later frames is performed by template matching.  We rely on techniques similar
 to those in Waken to detect when and where menus appear in UI videos.
@@ -79,7 +79,7 @@ in to one of our original project goals.
   \begin{minipage}{.4\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{PerClassPerformance1000}
-  \caption{AlexNet per-class accuracy results for the network trained on ``no noise'' data.}
+  \caption{AlexNet per-class accuracy results for our ``noiseless'' network.}
   \label{fig:per_class}
   \end{minipage}
 \end{figure}
@@ -127,13 +127,13 @@ interesting patterns, such as straight lines and rough, curved shapes.
   \begin{minipage}{.35\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{Filters_All1000}
-  \caption{Visualization of filters from the network trained on all our image data.}
+  \caption{Visualization of filters from the network trained on all data.}
   \label{fig:filters_all}
   \end{minipage}\hfill
   \begin{minipage}{.35\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{Filters_NoNoise1000}
-  \caption{Visualization of filters from the network trained on ``no noise'' image data.}
+  \caption{Visualization of filters from the network based on ``no noise'' data.}
   \label{fig:filters_nonoise}
   \end{minipage}
 \end{figure}
