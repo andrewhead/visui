@@ -24,42 +24,37 @@ these two stages might be combined to enhance the process of extracting informat
 
 \section{Introduction and Motivation}
 
-The proliferation of video tutorials on using different software raises new research questions on
-how to improve users' ability to learn from them~\cite{matejka_ambient_2011,
-pongnumkul_pause-and-play_2011}.  One strength of video tutorials is that users can directly observe
-expert use. Grossman \& Fitzmaurice showed that short, 10-25 second contextually-related videos were
-more effective to help users accomplish tasks than traditional text-based
-tutorials~\cite{grossman_toolclips_2010}.  Unfortunately, navigation issues could lead to
-misunderstanding of content, and users may not be able to keep up with the pace of instruction.
-Researchers working with longer, 2-3 minute task-oriented tutorials found that users performed
-better with text tutorials than videos because users could not work at the same pace as the
-video~\cite{grabler_generating_2009}. In general, research on instructional videos shows a need to
-segment videos to emphasize various steps. Our goal in this project is to explore how to segment
-existing videos by using computer vision techniques.
+In recent years, video tutorials for learning to use software have proliferated online.  
+This has attracted interest in improving users' ability to learn from them~\cite{matejka_ambient_2011,
+pongnumkul_pause-and-play_2011}.  Video tutorials appear to be beneficial for
+some learning tasks.  Grossman \& Fitzmaurice showed that short, 10-25 second contextually-related videos were
+more effective in helping users accomplish tasks than traditional text-based
+tutorials~\cite{grossman_toolclips_2010}.  
 
-By examining pixels, many have succeeded at reverse engineering user interfaces (UIs) and
+Unfortunately, navigation issues lead to misunderstandings, and users can't always keep up with the pace of instruction.
+Researchers found that when provided with 2-3 minute task-oriented tutorials, users perform
+better with text tutorials than videos because users cannot work at the same pace as the
+video~\cite{grabler_generating_2009}. This work points to a need to better segment, index, and 
+enable navigation of videos to improve users' abilities to adapt to the pace of instruction.
+In our project, we investigate techniques for \emph{understanding applications and menu events in UI tutorial videos through
+computer vision}, with the intent to enable new methods of segmenting, indexing and navigating tutorial videos.
+
+We build upon past work that visually reverse engineers user interfaces (UIs).
+By examining pixels, many have succeeded at reverse engineering UIs and
 interactions with purely visual information, independent of underlying application knowledge.  For
 instance, Sikuli~\cite{yeh_sikuli_2009} uses computer vision to identify GUI elements from screen
-captures by using template matching for small UI elements and voting based on invariant local
-features for large elements. Sikuli allows users to search for documentation related to screenshots
-of UI elements, and to script GUI tasks using visual cues.
-
-Pause-and-Play extends the template matching approach of Sikuli to detect tool-selection UI events
-in compressed, low-resolution video tutorials.  The system takes a tool palette template and tool
-icons as input and produces a metadata file of tool changes with timecodes.  With template matching
-at multiple resolutions, detection is invariant to recording resolution and some camera
-effects~\cite{pongnumkul_pause-and-play_2011}.
-
-% Can cite these but we need more space for actual content: ~\cite{dixon_content_2011}~\cite{dixon_general-purpose_2012}.
-Prefab identifies GUI elements with GUI-specific visual features~\cite{dixon_prefab_2010}, which
-enables overlay of advanced interactions on existing interfaces.  Prefab identifies interface
+captures with template matching for small UI elements and voting based on invariant local
+features for large elements. Prefab identifies GUI elements with GUI-specific visual features~\cite{dixon_prefab_2010}
+to provide an overlay of advanced interactions on existing interfaces.  The system identifies interface
 elements using two strategies: exact matches of prototype pixels, and models of the background and
-pixel differences to identify foreground interface elements. Waken~\cite{banovic_waken_2012}
-contributes to this research by discovering cursor shapes, clicking actions, icons, tooltips and
+pixel differences to identify foreground interface elements.
+
+Perhaps most related, Waken~\cite{banovic_waken_2012}
+contributes to this research direction by discovering cursor shapes, clicking actions, icons, tooltips and
 menus, all by examining the difference between frames of UI video.  They do this by making
 assumptions about how the image of icons change during hover and press actions.  Detection of the
 cursor and icons in later frames is performed by template matching.  We rely on techniques similar
-to those in Waken to establish when menus have been activated and menu items selected.
+to those in Waken to detect when and where menus appear in UI videos.
 
 
 \section{Video Classification}\label{sec:daniel}
@@ -162,14 +157,15 @@ correctly.
 \section{Locating Menus in a Frame Sequence}\label{andrew}
 
 Recent work~\cite{banovic_waken_2012} has shown how to extract templates for cursors and icons by
-monitoring pixel differences across frames.  While there has been some initial efforts
+monitoring pixel differences across frames of UI videos.  While there have been some initial efforts
 towards recognizing tooltips and menus~\cite{banovic_waken_2012}, this task still lacks a
 satisfying solution, given that reliable techniques to identify menu-based events could enable
-automatic assessment of usability from UI video.
+automatic assessment of usability from UI video and provide new ways of indexing tutorial videos
+based on complex user interface events.
 
-Detecting menus based on pixel difference between frames poses three challenges.  First, compressed 
+It is challenging to detect menus based on pixel difference between frames for three reasons.  First, compressed 
 video contains frame-to-frame noise that clouds the signal of a change in UI appearance, 
-particularly if UI widgets tend to fade in or out gradually.  Second, these menus occlude
+particularly if UI widgets tend to fade in or out gradually.  Second, when menus appear, they occlude
 heterogeneous backgrounds (photos in Photoshop, colorful code in the IDE), making the difference
 at each individual pixel highly-varied relative to its neighbors when a new object appears in the
 foreground, even if it is of homogeneous color.  Third, depending on the operating system, 
@@ -228,7 +224,7 @@ and short enough to avoid capturing multiple menu actions in the same window.  S
 pixel differences} into a blob that spans the menu.  We perform heavy smoothing to remove
 discontinuities in edge segments and bridge blobs from menu text (Figure~\ref{fig:pipeline3}).
 We binarize the smoothed image at a heuristically-determined threshold (Figure~\ref{fig:pipeline4}).
-Finally, we use existing methods for contour detection to trace the blob outline (Figure~\ref{fig:pipeline5}),
+Finally, we use existing methods for \emph{contour detection} to trace the blob outline (Figure~\ref{fig:pipeline5}),
 from which we take a rectangular bounding box as a region proposal (Figure~\ref{fig:pipeline6}).
 We ignore all blobs that are smaller than 5000 pixels (around $70x70$ pixels square) to filter
 out false positives from noisy regions of the screen.
@@ -241,9 +237,9 @@ For each menu appearance, we selected the first frame where the menu was fully o
 The quality of our region proposals is promising.  Our technique locates region proposals that
 overlap with the ground truth in 30/33 (91\%) of the test events.  We see an average 
 intersection-over-union of 74\%.  Our technique produced only 2 false positive bounding rectangles 
-for all menu appearances.  We note that the strength of our technique varies depending
-on operating system.  For example, our system produced low-overlap region proposals
-on a computer like Windows 2000, where the menu and application background color were likely
+for all menu appearances.  We note that the strength of our technique varies by
+operating system.  For example, our system produced low-overlap region proposals
+on a Windows 2000-style interface, where the menu and application background color were likely
 indistinguishable to our difference detection methods (Figure~\ref{fig:proposal5}, Figure~\ref{fig:proposal6}).
 
 \begin{figure}
@@ -300,7 +296,7 @@ appearances and disappearances in the future.
 \section{Discussion and Conclusion}
 
 We have described a classifier that can classify video frames, and a pipeline for extracting menus
-from videos. Future would would ideally integrate both steps in an overall data mining pipeline by
+from videos. Future work would ideally integrate both steps in an overall data mining pipeline by
 using class knowledge to develop more specific templates for menu extraction.
 
 \printbibliography
