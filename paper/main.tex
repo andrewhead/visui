@@ -175,7 +175,7 @@ at each individual pixel highly-varied relative to its neighbors when a new obje
 foreground, even if it is of homogeneous color.  Third, depending on the operating system, 
 the edges dividing menus from ribbons and borders in the main UI may be subtle compared to the
 internal edges in a menu caused by text or internal horizontal lines that separate groups of options.
-This makes it impossible to apply traditinoal segmentation techniques to extract menu regions from 
+This makes it impossible to apply traditional segmentation techniques to extract menu regions from 
 static images.
 
 \begin{figure}
@@ -238,8 +238,8 @@ in the Eclipse IDE.  This sample covered 3 different operating systems.
 For each menu appearance, we selected the first frame where the menu was fully opaque in the video
 (i.e., after fade-in) and manually determined its ground truth bounding box.
 
-The quality of our region proposals is promising.  Our technique locates region proposal that
-overlapping with the ground truth in 30/33 (91\%) of the test events.  We see an average 
+The quality of our region proposals is promising.  Our technique locates region proposals that
+overlap with the ground truth in 30/33 (91\%) of the test events.  We see an average 
 intersection-over-union of 74\%.  Our technique produced only 2 false positive bounding rectangles 
 for all menu appearances.  We note that the strength of our technique varies depending
 on operating system.  For example, our system produced low-overlap region proposals
@@ -288,7 +288,7 @@ indistinguishable to our difference detection methods (Figure~\ref{fig:proposal5
 
 Our technique shows promise for extracting menu regions from UI videos.  We took preliminary efforts
 to determine how to detect frame indexes where menus appear.  We hypothesize that frames with a 
-high absolute pixel difference over their predecessors contained UI events.  To test his hypothesis, 
+high absolute pixel difference over their predecessors contained UI events.  To test this hypothesis, 
 we extracted frames from one tutorial video for which the absolute pixel difference in the last 10
 frames was in the 90th percentile of all differences.  Taking a sample of 50 of these frames, we confirmed that
 \emph{nearly all} frames in this percentile showed a UI event in progress.  Of these, only 6 (12\%) 
